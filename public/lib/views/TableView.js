@@ -36,8 +36,56 @@ App.TableView = Backbone.View.extend({
 		}, this);
 	},
 	settle: function(callback) {
-		console.log('TODO: table view settlement');
-		callback();
+		async.forEach(this.boxes.views, _.bind(function(bv, callback) {
+			async.forEach(_.clone(bv.hands.views), _.bind(function(hv, callback) {
+				// todo: ensure natural
+				var cards = hv.model.get('cards').plain();
+				var chipsView = hv.chips.$el.offset();
+				if (blackjack.isBlackjack(cards)) {
+					var wonChipsView;
+
+					async.series({
+						pay: function(callback) {
+							wonChipsView = new App.ChipsView({ 
+								model: new Backbone.Model({ value: hv.model.get('bet') * 1.5 }) 
+							}).render();
+							wonChipsView.$el.appendTo($('body')).css({
+								position: 'absolute',
+								top: 100,
+								left: 350
+							}).fadeTo(0, 0).animate({
+								top: chipsView.top,
+								left: chipsView.left - 28,
+								opacity: 1
+							}, callback);
+						},
+						wait: function(callback) {
+							setTimeout(callback, 1000);
+						},
+						discard: function(callback) {
+							async.parallel([
+								function(callback) {
+									hv.chips.$el.fadeTo(500, 0, callback);
+								},
+								function(callback) {
+									wonChipsView.$el.fadeTo(500, 0, callback);
+								},
+								function(callback) {
+									hv.cards.collection.reset([], { animate: true, callback: callback });
+								}
+							], callback);
+						},
+						destroy: function(callback) {
+							hv.destroy();
+							wonChipsView.destroy();
+							callback();
+						}
+					}, callback);
+				} else {
+					callback();
+				}
+			}, this), callback);
+		}, this), callback);
 	},
 	discard: function(callback) {
 		async.parallel([

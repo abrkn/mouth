@@ -38,7 +38,7 @@ App.BoxView = Backbone.View.extend({
         'click .btn.sit': 'onClickSit'
     },
     onClickBet: function(e) {
-        this.model.set('bet', (this.model.get('bet') || 0) + 25);
+        this.model.set('bet', (this.model.get('bet') || 0) + 100);
         this.trigger('bet', { bet: this.model.get('bet') });
     },
     onClickSit: function(e) {

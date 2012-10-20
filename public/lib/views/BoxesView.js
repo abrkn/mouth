@@ -1,6 +1,7 @@
 App.BoxesView = Backbone.View.extend({
     className: 'boxes',
     initialize: function() {
+        _.bindAll(this);
         this.views = [];
         this.collection.each(this.add, this);
     },

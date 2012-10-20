@@ -18,6 +18,7 @@ App.LobbyView = Backbone.View.extend({
 
 	el: '#lobby',
 	initialize: function() {
+		_.bindAll(this);
 		this.collection.on('reset', this.render, this);
 	},
 	add: function(model) {

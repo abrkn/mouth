@@ -1,6 +1,7 @@
 App.DealerView = Backbone.View.extend({
     className: 'dealer',
     initialize: function() {
+        _.bindAll(this);
         this.cards = new App.CardsView({ collection: this.model, layout: 2 });
         this.cards.$el.appendTo(this.$el);
     },

@@ -66,6 +66,21 @@ _.extend(App.TableController.prototype, {
         });
 
         this.subscribe('turn', function(turn, callback) {
+            // find boxes who were not given their turn due to having blackjack
+            // and pay them
+
+            var previousTurn = this.model.get('turn');
+
+            if (previousTurn) {
+                for (var boxIndex = previousTurn[0]; boxIndex < turn[0]; boxIndex++) {
+                    var boxView = _.find(this.views.boxes.views, function(x) { return x.model.get('index') === boxIndex; });
+                    // make sure split count is zero to avoid paying non-naturals
+                    var handView = _.find(boxViews.hands.views, function(x) { return x.model.get('index') === 0; });
+                    if (!blackjack.isBlackjack(handView.cards.collection.plain())) return;
+                    console.log('pay up');
+                }
+            }
+
             this.model.set('turn', turn);
             callback();
         });
