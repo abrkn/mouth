@@ -1,0 +1,20 @@
+{
+	"name": "mouth",
+	"version": "0.0.0",
+	"dependencies": {
+		"bitcoin": "x",
+		"mongoose": "x",
+		"express": "x",
+		"bcrypt": "x",
+		"underscore": "x",
+		"connect-mongo": "x"
+	},
+	"devDependencies": {
+		"mocha": "x",
+		"expect.js": "x"
+	},
+	"engines": {
+    	"node": "x",
+    	"npm": "x"
+  	}
+}

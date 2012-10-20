@@ -1,0 +1,101 @@
+.chips { position: relative; }
+.chips .chip { position: absolute; }
+.chips .summary { position: absolute; color: #000; font-size: 11px; background-color: #eee; }
+
+#table {
+	background: url(/media/layout.jpg) no-repeat;
+	@width: 930px;
+	@height: 610px;
+	height: @height;
+	width: @width;
+
+	position: relative;
+
+	.cards {
+		position: relative;
+
+	    > .summary {
+	    	position: absolute;
+	    	left: -25px;
+	    	background-color: black;
+	    	color: white;
+	    }
+
+		> .card {
+			position: absolute;
+		}
+	}
+
+	> .dealer {
+		position: absolute;
+		top: 100px;
+		left: 400px;
+	}
+
+	> .boxes {
+		> .box {
+			width: @width * 0.2;
+			height: @height * 0.3;
+		    position: absolute;
+
+		    .box-n(@n) {
+		    	left: (@width * 0.2) * (4 - @n);
+		    }
+
+		    .btn { position: absolute; }
+
+		    .btn.sit, .btn.bet {
+		    	position: absolute;
+		    	display: block;
+		    	top: 160px;
+		    	left: 50px;
+		    }
+
+		    div.player { 
+		    	top: 135px; 
+		    	left: 50px; 
+		    	position: absolute; 
+		    	color: #eee;
+		    }
+
+		    &.box4 {
+		    	.box-n(4);
+		    	top: @height * 0.4;
+		    }
+
+		    &.box3 {
+		    	.box-n(3);
+		    	top: @height * 0.5;
+		    }
+
+		    &.box2 {
+		    	.box-n(2);
+		    	top: @height * 0.55;
+		    }
+
+		    &.box1 {
+		    	.box-n(1);
+		    	top: @height * 0.5;
+		    }
+
+		    &.box0 {
+		    	.box-n(0);
+		    	top: @height * 0.4;
+		    }
+
+			> .hands {
+			    position: relative;
+
+				> .hand {
+				    position: absolute;
+
+				    .btn.hit { top: 100px; }
+				    .btn.stand { top: 100px; left: 50px; }
+
+					> .cards {
+					}
+				}
+			}
+		}
+	}
+}

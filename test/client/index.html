@@ -1,0 +1,49 @@
+
+<script src="public/vendor/jquery-1.8.2.min.js"></script>
+<script src=""></script>
+<script src="test/client/support/mocha.js"></script>
+<script>mocha.setup('bdd');</script>
+
+<script src="public/lib/underscore/underscore.js"></script>
+<script src="public/lib/backbone/backbone.js"></script>
+<script src="public/js/App.js"></script>
+
+<?- embed('views/user-link-list.html') ?>
+<?- embed('views/searchresults.html') ?>
+<?- embed('views/linklist.html') ?>
+
+<script>App.parseTemplates();</script>
+
+
+<script src="public/js/views/section.js"></script>
+<script src="public/js/views/searchresults.js"></script>
+<script src="public/js/views/userlinklist.js"></script>
+<script src="public/js/views/linklistview.js"></script>
+<script src="public/js/views/modal.js"></script>
+<script src="public/js/views/player.js"></script>
+<script src="public/js/models/link.js"></script>
+<script src="public/js/models/userlink.js"></script>
+<script src="public/js/models/impression.js"></script>
+
+<script src="test/client/searchresultsview.js"></script>
+<script src="test/client/linklistitemview.js"></script>
+<script src="test/client/userlink.js"></script>
+<script src="test/client/userlinklist.js"></script>
+<script src="test/client/impression.js"></script>
+<script src="test/client/playerview.js"></script>
+
+<script>
+	$(function(){
+		App.settings = { env: 'dev' };
+		App.log = new App.Log;
+		App.log.debug('runner')
+		window.runner = mocha.run();
+		window.runner.ignoreLeaks = true;
+		window.runner.$events.end.push(function() { window.testsCompleted = true; });
+		window.runner.globals(['App', 'runner', 'testsCompleted']);
+	});
+</script>
+
+<div id="mocha"></div>
+
+<link rel="stylesheet" href="test/client/support/mocha.css"></script>
