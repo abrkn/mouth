@@ -14,7 +14,9 @@ App.HandView = App.View.extend({
         this.viewModel.on('change:canAct', this.onChangeCanAct);
         this.$el.find('.btn.hit, .btn.stand').hide();
 
-        this.chips = new App.ChipsView({ model: new Backbone.Model({ value: this.model.get('bet') || null }), el: this.$el.find('>.chips') }).render();
+        console.log('at init, hand view has bet of', this.model.get('bet'));
+        this.chips = new App.ChipsView({ model: new Backbone.Model({ value: this.model.get('bet') }), el: this.$el.find('.chips') }).render();
+        console.log('hand chips', this.chips.model.attributes)
     },
     discard: function(animate, callback) {
         console.log('HandView: discarding', this.cards.length, 'cards');

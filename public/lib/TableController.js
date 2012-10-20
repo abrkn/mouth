@@ -84,33 +84,37 @@ _.extend(App.TableController.prototype, {
                 }, this),
                 conclusion: _.bind(function(callback) {
                     setTimeout(callback, 2500)
-                }, this)
+                }, this),
+                settle: this.view.settle
             }, callback);
         });
 
-        this.subscribe('hit', function(card, callback) {
+        this.subscribe('hit', function(c, callback) {
             console.log('hit', blackjack.pretty(card));
 
-            var box = this.model.get('boxes').at(this.model.get('turn')[0]);
-            console.log('box for hitting', box);
+            var turn = this.model.get('turn')
+            , box = this.model.get('boxes').find(function(x){ return x.get('index') === turn[0]; })
+            , hand = box.get('hands').find(function(x) { return x.get('index') === turn[1]; })
+            , boxView = this.view.boxes.views[turn[0]]
+            , handView = _.find(boxView.hands.views, function(v) { return v.model === hand })
+            , card = new App.Card({ value: c });
 
-            var hand = box.get('hands').where({ index: this.model.get('turn')[1] })[0];
-            console.log('hand for hitting', hand);
-
-            if (!hand) {
-                console.log('looked for hand index', this.model.get('turn')[1], 'in', box.get('hands'));
-            }
-
-            card = new App.Card({ value: card });
             hand.get('cards').push(card);
 
             if (blackjack.sum(hand.get('cards').plain()) > 21) {
-                console.log('busted!');
                 this.model.set('turn', null);
 
-                setTimeout(_.bind(function() {
-                    box.get('hands').remove(hand, { animate: true, callback: callback });
-                }, this), 1500);
+                async.series({
+                    hold: function(callback) { setTimeout(callback, 1500); },
+                    discard: function() {
+                        async.parallel({
+                            lose: handView.chips.lose,
+                            discard: function(callback) {
+                                box.get('hands').remove(hand, { animate: true, callback: callback });
+                            }
+                        }, callback);
+                    }
+                }, callback);
 
                 return;
             }

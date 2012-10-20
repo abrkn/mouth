@@ -34,7 +34,8 @@ App.CardView = App.View.extend({
             top: offset.top
         }).appendTo('body').animate({
             left: -100,
-            top: -100
+            top: -100,
+            opacity: 0
         }, animate, callback);
         this.destroy();
     },

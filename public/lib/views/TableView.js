@@ -35,6 +35,10 @@ App.TableView = Backbone.View.extend({
 			}, this);
 		}, this);
 	},
+	settle: function(callback) {
+		console.log('TODO: table view settlement');
+		callback();
+	},
 	discard: function(callback) {
 		async.parallel([
 			// dealer

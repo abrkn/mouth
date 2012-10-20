@@ -3,6 +3,7 @@ App.BoxView = Backbone.View.extend({
     viewModel: null,
     template: _.template($('#box-template').remove().html()),
     initialize: function() {
+        _.bindAll(this);
         this.$el.html(this.template({ }));
 
         this.hands = new App.HandsView({ collection: this.model.get('hands') });
@@ -29,14 +30,16 @@ App.BoxView = Backbone.View.extend({
             this.$el.find('.btn.bet').toggle(this.viewModel.get('canBet'));
         }, this);
 
-        this.chips = new App.ChipsView({ model: new Backbone.Model({ value: this.model.get('bet') || null }), el: this.$el.find('>.chips') }).render();
+        this.chips = new App.ChipsView({ model: new Backbone.Model({ value: this.model.get('bet') || null }), el: this.$el.find('.chips:first ') }).render();
+        ////REDUNDANT this.model.on('change:bet', _.bind(function() { this.chips.model.set('value', this.model.get('bet')); }, this));
     },
     events: {
         'click .btn.bet': 'onClickBet',
         'click .btn.sit': 'onClickSit'
     },
     onClickBet: function(e) {
-        this.trigger('bet', { bet: 100 });
+        this.model.set('bet', (this.model.get('bet') || 0) + 25);
+        this.trigger('bet', { bet: this.model.get('bet') });
     },
     onClickSit: function(e) {
         this.trigger('sit');
