@@ -4,27 +4,8 @@ App.CardView = App.View.extend({
         _.bindAll(this);
         this.$container = $('<div>').css({ position: 'relative' }).appendTo(this.$el);
 
-        this.$el.css({
-            width: 73,
-            height: 98
-        });
-
-        this.$back = $('<div>').css({
-            background: 'url("http://i.imgur.com/Suin0.png") no-repeat',
-            width: 73,
-            height: 98,
-            position: 'absolute',
-            left: 0,
-            top: 0
-        }).appendTo(this.$container);
-
-        this.$front = $('<div>').css({
-            width: 73,
-            height: 98,
-            position: 'absolute',
-            left: 0,
-            top: 0
-        }).appendTo(this.$container);
+        this.$back = $('<div class=back>').appendTo(this.$container);
+        this.$front = $('<div class=front>').appendTo(this.$container);
     },
     discard: function(animate, callback) {
         var offset = this.$el.offset()
@@ -72,10 +53,9 @@ App.CardView = App.View.extend({
             var rank = (value - 1) % 13 + 1;
 
             this.$front.css({
-                background: 'url("http://www.jfitz.com/cards/classic-playing-cards.png") no-repeat',
-                'background-position-x': -((rank- 1) * 73),
-                // convert from shdc(bridge) to cshd(no idea)
-                'background-position-y': -([3, 0, 1, 2].indexOf(suit) * 98)
+                // convert from shdc(bridge) to cshd(arbitrary)
+                'background-position-y': -([3, 0, 1, 2].indexOf(suit) * 98),
+                'background-position-x': -((rank- 1) * 73)
             });
         }
 

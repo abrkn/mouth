@@ -1,6 +1,21 @@
 .chips { position: relative; }
 .chips .chip { position: absolute; }
 .chips .summary { position: absolute; color: #eee; font-size: 11px; font-weight: bold; }
+.card {
+	width: 73px;
+	height: 98px;
+	> * > * {
+		width: 73px;
+		height: 98px;
+		position: absolute;
+		&.back {
+			background: url(/media/back.png) no-repeat;
+		}
+		&.front {
+            background: url(/media/cards.png) no-repeat;
+		}
+	}
+}
 
 #table {
 	//background: url(/media/layout.jpg) no-repeat;
