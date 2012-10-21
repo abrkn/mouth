@@ -9,7 +9,7 @@ App.BoxesView = Backbone.View.extend({
         var view = new App.BoxView({ model: model });
 
         _.each(['sit', 'bet', 'hit', 'stand'], function(name) {
-            view.on(name, function(e) { console.log('boxes', e); this.trigger(name, _.extend({ box: view.model }, e)); }, this);
+            view.on(name, function(e) { this.trigger(name, _.extend({ box: view.model }, e)); }, this);
         }, this);
 
         this.views.push(view);

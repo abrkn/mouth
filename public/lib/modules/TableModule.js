@@ -1,6 +1,6 @@
-App.TableController = function(id) {
+App.TableModule = function(socket, id) {
 	this.id = id;
-	this.socket = App.socket;
+	this.socket = socket;
     this.prefix = 'table:' + id + ':';
 
     this.queue = (function() {
@@ -21,10 +21,10 @@ App.TableController = function(id) {
 	this.subscribe('catchup', this.onSocketCatchup, { once: true, queue: false });
 };
 
-_.extend(App.TableController.prototype, {
+_.extend(App.TableModule.prototype, {
     send: function(name, m) {
         this.socket.emit(this.prefix + name, m);
-        console.log('-->' + this.prefix + name + ':', m);
+        console.log('[socket] -->' + this.prefix, this.name, m);
     },
     subscribe: function(name, fn, options) {
     	options = _.extend({ queue: true, once: false }, options);
@@ -32,7 +32,7 @@ _.extend(App.TableController.prototype, {
     		console.log(this.prefix + name, m);
     		if (!options.queue) return fn.call(this, m);
     		this.queue(_.bind(function(callback) {
-                console.log('[subscribe] running handler for message', name, 'with', m);
+                console.log('[socket] <-- ', this.prefix, name, m);
     			fn.call(this, m, callback);
     		}, this));
     	}, this));
@@ -197,6 +197,10 @@ _.extend(App.TableController.prototype, {
                     var cards = this.model.get('boxes').at(b.index).get('hands').at(0).get('cards');
                     cards.push(new App.Card({ value: b.cards[1] }), { animate: 500, callback: callback });
                 }, this), callback);
+            }, this),
+            // settle blackjacks
+            settle: _.bind(function(callback) {
+                this.view.settle(callback);
             }, this)
         }, callback);
     }

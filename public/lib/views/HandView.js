@@ -14,9 +14,7 @@ App.HandView = App.View.extend({
         this.viewModel.on('change:canAct', this.onChangeCanAct);
         this.$el.find('.btn.hit, .btn.stand').hide();
 
-        console.log('at init, hand view has bet of', this.model.get('bet'));
         this.chips = new App.ChipsView({ model: new Backbone.Model({ value: this.model.get('bet') }), el: this.$el.find('.chips') }).render();
-        console.log('hand chips', this.chips.model.attributes)
     },
     events: {
         'click .btn.hit': 'onHitClicked',
@@ -49,7 +47,6 @@ App.HandView = App.View.extend({
     },
     render: function() {
         this.cards.render();
-        console.log('at render, hand view model has a bet of', this.model.attributes.bet);
         this.chips.model.set('value', this.model.get('bet') || null);
         return this;
     }

@@ -14,11 +14,9 @@ App.CardsView = App.View.extend({
     },
     updateSummary: function() {
         var cards = this.collection.plain();
-        console.log('cards for summary', cards)
         if (!cards.length) return this.$summary.hide();
         this.$summary.show();
         if (blackjack.sum(cards) > 21) return this.$summary.show().css({ 'background-color': 'red', color: 'white'}).html('BUSTED');
-        console.log('summary', blackjack.pretty(cards))
         this.$summary.show().css({ 'background-color': '', color: 'white'}).html(blackjack.pretty(cards));
     },
     reset: function(collection, options) {

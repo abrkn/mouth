@@ -22,7 +22,6 @@ App.TableView = Backbone.View.extend({
 		this.render();
 	},
 	toggleActions: function() {
-		console.log('TableView: toggling actions');
 		_.each(this.boxes.views, function(bv) {
 			bv.viewModel.set('canSit', bv.model.get('player') === null && !!~['over', 'betting', 'dead'].indexOf(this.model.get('state')));
 			var mine = bv.model.get('player') === App.player;
@@ -103,28 +102,9 @@ App.TableView = Backbone.View.extend({
 	},
 	onStateChange: function() {
 		this.toggleActions();
-
-		console.log('state change (table view handler) to', this.model.get('state'));
-
-		if (this.model.get('state') == 'betting') {
-			console.log('--- BETTING --------------------');
-		} else if (this.model.get('state') == 'playing') {
-			console.log('--- PLAYING --------------------');
-		}
 	},
 	onTurnChange: function() {
 		this.toggleActions();
-	},
-	// todo: move box creation to controller
-	onRulesChange: function() {
-		_.each(_.range(this.model.attributes.rules.boxes), function(index) {
-			var box = new App.Box({
-				hands: new Backbone.Collection,
-				index: index
-			});
-
-			this.model.attributes.boxes.push(box);
-		}, this);
 	},
 	render: function() {
 		this.toggleActions();
