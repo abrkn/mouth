@@ -1,6 +1,7 @@
 window.App = {
 	settings: {
-        debugDisplayQueue: true
+        debugDisplayQueue: true,
+        automate: false
 	},
     tables: [],
 
@@ -31,11 +32,36 @@ window.App = {
         	});
 
         	App.socket.on('join', function(id) {
-                console.log('joined table', id);
+                var table = new App.TableModule(App.socket, id);
+                App.tables.push(table);
 
-                App.tables.push(new App.TableModule(App.socket, id));
+                if (App.settings.automate) {
+
+
+
+                    var box = null;
+                    var bet = 0;
+
+                    table.queue.drain = function() {
+                        if (table.model.attributes.state == 'betting') {
+                            if (box) {
+
+                            } else {
+                                console.log('no box')
+                                box = table.model.get('boxes').where({ player: null })[0];
+                                table.send('sit', box.attributes.index);
+                            }
+                        }
+                    };
+                }
         	});
         });
+    },
+
+    util: {
+        ghost: function($el) {
+            return $el.clone().css('position', 'absolute').css($el.offset()).appendTo('body');
+        }
     }
 };
 

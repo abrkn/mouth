@@ -21,7 +21,6 @@ App.HandView = App.View.extend({
         'click .btn.stand': 'onStandClicked'
     },
     onHitClicked: function(e) {
-        console.log('hit clicked');
         this.trigger('hit');
     },
     onStandClicked: function(e) {

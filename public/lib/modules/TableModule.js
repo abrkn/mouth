@@ -10,36 +10,51 @@ App.TableModule = function(socket, id) {
             fn(enqueue.callback);
         }, {
             busy: false,
+            drain: null,
             queue: [],
             callback: function() {
-                enqueue.queue.length ? enqueue.queue.splice(0, 1)[0](enqueue.callback) : (enqueue.busy = false);
+                if (enqueue.queue.length) {
+                    enqueue.queue.splice(0, 1)[0](enqueue.callback);
+                } else {
+                    enqueue.busy = false;
+                    enqueue.drain && enqueue.drain();
+                }
             }
         });
         return enqueue;
     })();
 
-	this.subscribe('catchup', this.onSocketCatchup, { once: true, queue: false });
+    this.queue.drain = function() {
+        console.log('-- DRAIN -------------------');
+    };
+
+	this.subscribe('catchup', this.onSocketCatchup, { once: true });
 };
 
 _.extend(App.TableModule.prototype, {
     send: function(name, m) {
-        this.socket.emit(this.prefix + name, m);
-        console.log('[socket] -->' + this.prefix, this.name, m);
+        this.queue(_.bind(function(callback) {
+            this.socket.emit(this.prefix + name, m);
+            console.log('[socket] --> ' + this.prefix, name, m);
+            callback();
+        }, this));
     },
     subscribe: function(name, fn, options) {
     	options = _.extend({ queue: true, once: false }, options);
     	(options.once ? this.socket.once : this.socket.on).call(this.socket, this.prefix + name, _.bind(function(m) {
-    		console.log(this.prefix + name, m);
-    		if (!options.queue) return fn.call(this, m);
+    		if (!options.queue) {
+                console.log('[socket] <-- ', this.prefix, name, m);
+                return fn.call(this, m);
+            }
+
     		this.queue(_.bind(function(callback) {
                 console.log('[socket] <-- ', this.prefix, name, m);
     			fn.call(this, m, callback);
     		}, this));
     	}, this));
     },
-    onSocketCatchup: function(m) {
+    onSocketCatchup: function(m, callback) {
         console.log('catching up on table', this.id, 'with state', m);
-        this.queue.enabled = false;
 
         this.model = new App.Table(m, { parse: true });
         console.log('table state parsed', this.model.toJSON());
@@ -66,23 +81,14 @@ _.extend(App.TableModule.prototype, {
         });
 
         this.subscribe('turn', function(turn, callback) {
-            // find boxes who were not given their turn due to having blackjack
-            // and pay them
-
-            var previousTurn = this.model.get('turn');
-
-            if (previousTurn) {
-                for (var boxIndex = previousTurn[0]; boxIndex < turn[0]; boxIndex++) {
-                    var boxView = _.find(this.views.boxes.views, function(x) { return x.model.get('index') === boxIndex; });
-                    // make sure split count is zero to avoid paying non-naturals
-                    var handView = _.find(boxViews.hands.views, function(x) { return x.model.get('index') === 0; });
-                    if (!blackjack.isBlackjack(handView.cards.collection.plain())) return;
-                    console.log('pay up');
-                }
-            }
-
-            this.model.set('turn', turn);
-            callback();
+            async.series({
+                // post-split twenty-ones may have been skipped
+                settle: this.view.settle,
+                apply: _.bind(function(callback) {
+                    this.model.set('turn', turn);
+                    callback();
+                }, this)
+            }, callback);
         });
 
         this.subscribe('open', function(cards, callback) {
@@ -105,8 +111,6 @@ _.extend(App.TableModule.prototype, {
         });
 
         this.subscribe('hit', function(c, callback) {
-            console.log('hit', blackjack.pretty(card));
-
             var turn = this.model.get('turn')
             , box = this.model.get('boxes').find(function(x){ return x.get('index') === turn[0]; })
             , hand = box.get('hands').find(function(x) { return x.get('index') === turn[1]; })
@@ -119,17 +123,7 @@ _.extend(App.TableModule.prototype, {
             if (blackjack.sum(hand.get('cards').plain()) > 21) {
                 this.model.set('turn', null);
 
-                async.series({
-                    hold: function(callback) { setTimeout(callback, 1500); },
-                    discard: function() {
-                        async.parallel({
-                            lose: handView.chips.lose,
-                            discard: function(callback) {
-                                box.get('hands').remove(hand, { animate: true, callback: callback });
-                            }
-                        }, callback);
-                    }
-                }, callback);
+                this.view.settle(callback);
 
                 return;
             }
@@ -138,24 +132,29 @@ _.extend(App.TableModule.prototype, {
         });
 
         this.subscribe('deal', this.onDeal);
+        this.subscribe('state', this.onState);
 
-        this.subscribe('state', function(m, callback) {
-            this.view.toggleActions();
+        callback();
+    },
 
-            if (m.state == 'betting') {
-                this.view.discard(_.bind(function() {
+    onState: function(m, callback) {
+        if (m.state == 'betting') {
+            async.series({
+                settle: this.view.settle,
+                discard: this.view.discard,
+                apply: _.bind(function(callback) {
                     this.model.set('state', m.state);
                     callback();
-                }, this));
-
-                return;
-            }
-
+                }, this),
+                toggle: this.view.toggleActions
+                // render?
+            }, callback);
+        } else {
+            this.view.toggleActions();
             this.model.set('state', m.state);
+            this.view.render();
             callback();
-        });
-
-        this.view.render();
+        }
     },
 
     end: function(callback) {
@@ -178,8 +177,6 @@ _.extend(App.TableModule.prototype, {
                     var box = this.model.get('boxes').at(b.index);
                     var cards = new App.Cards;
 
-                    console.log('TEMP bo bet', box.attributes);
-
                     var hand = new App.Hand({
                         index: 0,
                         cards: cards,
@@ -187,7 +184,7 @@ _.extend(App.TableModule.prototype, {
                     });
 
                     box.set('bet', null);
-
+                    box.set('splits', 0);
                     box.get('hands').reset([hand]);
                     cards.add(new App.Card({ value: b.cards[0] }), { animate: 500, callback: callback });
                 }, this), callback);

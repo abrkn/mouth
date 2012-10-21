@@ -21,7 +21,7 @@ App.TableView = Backbone.View.extend({
 
 		this.render();
 	},
-	toggleActions: function() {
+	toggleActions: function(callback) {
 		_.each(this.boxes.views, function(bv) {
 			bv.viewModel.set('canSit', bv.model.get('player') === null && !!~['over', 'betting', 'dead'].indexOf(this.model.get('state')));
 			var mine = bv.model.get('player') === App.player;
@@ -33,56 +33,112 @@ App.TableView = Backbone.View.extend({
 				hv.viewModel.set('canAct', hot);
 			}, this);
 		}, this);
+
+		callback && callback();
+	},
+	// attempt to settle (box view needed to obtain splits)
+	settleHand: function(box, hand, callback) {
+		var result = null;
+
+		var cards = handView.cards.collection.plain();
+		var splits = box.model.get('splits');
+		var bet = hand.model.get('bet');
+
+		if (blackjack.isBust(cards)) {
+			result = 0;
+		} else if (!splits && blackjack.isBlackjack(cards)) {
+			result = 2.5 * bet;
+		} else {
+			// may not have drawn at this point
+			var dealer = this.dealer.cards.collection.plain();
+
+			if (dealer.length == 1) return callback && callback();
+		}
+	},
+	pay: function(chips, amount, callback) {
+		var wonChipsView = new App.ChipsView({ 
+			model: new Backbone.Model({ value: amount })
+		}).render();
+
+		wonChipsView.$el.appendTo($('body')).css({
+			position: 'absolute',
+			top: 100,
+			left: 350
+		}).fadeTo(0, 0).animate({
+			top: chips.$el.offset().top,
+			left: chips.$el.offset().left - 28,
+			opacity: 1
+		}, function() {
+			setTimeout(function() {
+				wonChipsView.disappear();
+			}, 1500);
+
+			callback();
+		});
+	},
+	take: function(chips, callback) {
+		var $ghost = App.util.ghost(chips.$el);
+		chips.destroy();
+		$ghost.animate({
+			top: 100,
+			left: 350
+		}).animate({
+			opacity: 0
+		}, {
+			queue: true,
+			complete: function() {
+				callback();
+			}
+		});
 	},
 	settle: function(callback) {
+		console.log('setting');
 		async.forEach(this.boxes.views, _.bind(function(bv, callback) {
 			async.forEach(_.clone(bv.hands.views), _.bind(function(hv, callback) {
-				// todo: ensure natural
-				var cards = hv.model.get('cards').plain();
-				var chipsView = hv.chips.$el.offset();
-				if (blackjack.isBlackjack(cards)) {
-					var wonChipsView;
+				var splits = bv.model.get('splits')
+				, hand = hv.cards.collection.plain();
 
-					async.series({
-						pay: function(callback) {
-							wonChipsView = new App.ChipsView({ 
-								model: new Backbone.Model({ value: hv.model.get('bet') * 1.5 }) 
-							}).render();
-							wonChipsView.$el.appendTo($('body')).css({
-								position: 'absolute',
-								top: 100,
-								left: 350
-							}).fadeTo(0, 0).animate({
-								top: chipsView.top,
-								left: chipsView.left - 28,
-								opacity: 1
-							}, callback);
-						},
-						wait: function(callback) {
-							setTimeout(callback, 1000);
-						},
-						discard: function(callback) {
-							async.parallel([
-								function(callback) {
-									hv.chips.$el.fadeTo(500, 0, callback);
-								},
-								function(callback) {
-									wonChipsView.$el.fadeTo(500, 0, callback);
-								},
-								function(callback) {
-									hv.cards.collection.reset([], { animate: true, callback: callback });
-								}
-							], callback);
-						},
-						destroy: function(callback) {
-							hv.destroy();
-							wonChipsView.destroy();
+				if (hand.length == 0) return callback();
+
+				var dealer = this.dealer.cards.collection.plain()
+				, bet = hv.model.get('bet') // todo: doubled
+				, returned = blackjack.settle(splits, hand, dealer);
+
+				if (returned == null) return callback();
+
+				console.log('settling hand', hv.model.attributes.index);
+
+				async.series({
+					money: _.bind(function(callback) {
+						if (returned == 1) {
+							console.log('*** NOT IMPLEMENTED *** TableView.settle for push');
+							console.log('splits', splits, 'hand', hand, 'dealer', dealer);
 							callback();
+						} else if (returned > 1) {
+							this.pay(hv.chips, (returned - 1) * bet, callback)
+						} else {
+							this.take(hv.chips, callback);
 						}
-					}, callback);
-				} else {
-					callback();
-				}
+					}, this),
+					pause: function(callback) {
+						setTimeout(callback, 1500);
+				 	},
+					discard: function(callback) {
+						async.parallel([
+							function(callback) {
+								console.log('fading chips');
+								hv.chips.disappear(callback);
+							},
+							function(callback) {
+								hv.cards.collection.reset([], { animate: true, callback: callback });
+							}
+						], callback);
+					},
+					destroy: function(callback) {
+						hv.destroy();
+						callback();
+					}
+				}, callback);
 			}, this), callback);
 		}, this), callback);
 	},

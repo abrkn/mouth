@@ -7,8 +7,12 @@ App.ChipsView = App.View.extend({
 		this.model.on('change', this.change);
 	},
 	change: function() {
-		console.log('model changed for chips to', arguments);
 		this.render();
+	},
+	disappear: function(duration, callback) {
+		this.$el.animate({
+			opacity: 0
+		}, duration || 500, callback);
 	},
 	lose: function(callback) {
 		var offset = this.$el.offset()
