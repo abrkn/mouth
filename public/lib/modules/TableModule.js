@@ -33,11 +33,13 @@ App.TableModule = function(socket, id) {
 
 _.extend(App.TableModule.prototype, {
     send: function(name, m) {
-        this.queue(_.bind(function(callback) {
-            this.socket.emit(this.prefix + name, m);
-            console.log('[socket] --> ' + this.prefix, name, m);
-            callback();
-        }, this));
+        setTimeout(_.bind(function() {
+            this.queue(_.bind(function(callback) {
+                this.socket.emit(this.prefix + name, m);
+                console.log('[socket] --> ' + this.prefix, name, m);
+                callback();
+            }, this));
+        }, this), App.settings.lag);
     },
     subscribe: function(name, fn, options) {
     	options = _.extend({ queue: true, once: false }, options);
@@ -47,10 +49,12 @@ _.extend(App.TableModule.prototype, {
                 return fn.call(this, m);
             }
 
-    		this.queue(_.bind(function(callback) {
-                console.log('[socket] <-- ', this.prefix, name, m);
-    			fn.call(this, m, callback);
-    		}, this));
+            setTimeout(_.bind(function() {
+                this.queue(_.bind(function(callback) {
+                    console.log('[socket] <-- ', this.prefix, name, m);
+                    fn.call(this, m, callback);
+                }, this));
+            }, this), App.settings.lag);
     	}, this));
     },
     onSocketCatchup: function(m, callback) {

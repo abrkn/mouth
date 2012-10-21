@@ -1,7 +1,8 @@
 window.App = {
 	settings: {
         debugDisplayQueue: true,
-        automate: false
+        automate: false,
+        lag: 0
 	},
     tables: [],
 
