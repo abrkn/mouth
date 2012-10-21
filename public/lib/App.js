@@ -14,7 +14,7 @@ window.App = {
         	App.tables = new Backbone.Collection;
         	App.lobby = new App.LobbyView({ collection: App.tables });
 
-        	App.socket = io.connect('http://localhost:3007');
+        	App.socket = io.connect(window.location.protocol + '//' + window.location.host);
 
         	App.socket.once('connect', function() {
         		console.log('[socket] connected');
