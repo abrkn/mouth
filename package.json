@@ -8,7 +8,8 @@
 		"bcrypt": "x",
 		"underscore": "x",
 		"connect-mongo": "x",
-		"socket.io": "x"
+		"socket.io": "x",
+		"debug": "x"
 	},
 	"devDependencies": {
 		"mocha": "x",
