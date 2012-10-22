@@ -3,13 +3,15 @@
 	"version": "0.0.0",
 	"dependencies": {
 		"bitcoin": "x",
-		"mongoose": "x",
+		//"mongoose": "x",
 		"express": "x",
-		"bcrypt": "x",
+		//"bcrypt": "x",
 		"underscore": "x",
-		"connect-mongo": "x",
+		//"connect-mongo": "x",
 		"socket.io": "x",
-		"debug": "x"
+		"debug": "x",
+		"browserify": "x",
+		"backbone": "x"
 	},
 	"devDependencies": {
 		"mocha": "x",
