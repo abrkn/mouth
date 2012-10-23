@@ -1,17 +1,15 @@
 {
 	"name": "mouth",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"dependencies": {
-		"bitcoin": "x",
-		//"mongoose": "x",
 		"express": "x",
-		//"bcrypt": "x",
 		"underscore": "x",
-		//"connect-mongo": "x",
 		"socket.io": "x",
 		"debug": "x",
 		"browserify": "x",
-		"backbone": "x"
+		"backbone": "x",
+		"less": "x",
+		"async": "x"
 	},
 	"devDependencies": {
 		"mocha": "x",
