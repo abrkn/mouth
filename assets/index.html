@@ -2,8 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<%= assets['bootstrap css'] %>
-		<%= assets['styles'] %>
+		<link rel="stylesheet" href="/styles.css" />
 	</head>
 	<body>
 		<div class="container" id="lobby" style="display:none;">
@@ -20,29 +19,7 @@
 			</div>
 		</div>
 
-		<script type="text/template" id="lobby-table-template">
-			<a href="#join">(%= id %)</a>
-		</script>
-
-		<script type="text/template" id="hand-template">
-				<button class="btn hit">Hit</button>
-				<button class="btn double">Double</button>
-				<button class="btn stand">Stand</button>
-				<div class="cards"></div>
-				<div class="chips"></div>
-		</script>
-
-		<script type="text/template" id="box-template">
-			<div class="wrapper" style="position:relative">
-				<button class="btn sit">Sit</button>
-				<button class="btn bet">Bet</button>
-				<div class="player"></div>
-				<div class="chips"></div>
-			</div>
-		</script>
-
-		<%= assets['jquery'] %>
 		<script src="/socket.io/socket.io.js"></script>
-		<%= assets['browserify'] %>
+		<script src="/scripts.js"></script>
 	</body>
 </html>

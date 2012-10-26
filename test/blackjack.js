@@ -145,7 +145,7 @@ describe('blackjack', function() {
 				dealer: blackjack.hand('td th'),
 				hands: [blackjack.hand('7d 8d')],
 				deck: blackjack.hand(''),
-				outcome = 0
+				outcome: 0
 			};
 
 			expect(function() { blackjack.hit(box); }).to.throwError();
@@ -157,7 +157,7 @@ describe('blackjack', function() {
 				dealer: blackjack.hand('td th'),
 				hands: [blackjack.hand('7d 8d')],
 				deck: blackjack.hand(''),
-				outcome = 0
+				outcome: 0
 			};
 
 			expect(function() { blackjack.hit(box); }).to.throwError();

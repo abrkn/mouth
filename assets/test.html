@@ -2,22 +2,9 @@
 		<button class="btn hit">Hit</button>
 		<button class="btn stand">Stand</button>
 </script>
-<link rel="stylesheet/less" type="text/css" href="../less/styles.less">
-<script src="../vendor/jquery-1.8.2.min.js"></script>
-<script src="../vendor/underscore-1.3.3.min.js"></script>
-<script src="../vendor/backbone-min.js"></script>
-<script src="../vendor/async.js"></script>
-<script src="../vendor/less-1.3.0.min.js"></script>
-<script>var App = {};</script>
-<script src="../lib/blackjack.js"></script>
-<script src="../lib/models/Hand.js"></script>
-<script src="../lib/models/Card.js"></script>
-<script src="../lib/views/View.js"></script>
-<script src="../lib/views/CardView.js"></script>
-<script src="../lib/views/HandView.js"></script>
-<script src="../lib/views/HandsView.js"></script>
-<script src="../lib/views/CardsView.js"></script>
-<script src="../lib/views/ChipsView.js"></script>
+<%= assets['bootstrap css'] %>
+<%= assets['styles'] %>
+
 <style>
 	.cards { position: relative; }
 	.cards > * { position: absolute; }
@@ -25,6 +12,10 @@
 	.chips .chip { position: absolute; }
 	.chips .summary { position: absolute; color: #000; font-size: 11px; background-color: #eee; }
 </style>
+
+<%= assets['jquery'] %>
+<%= assets['browserify'] %>
+
 <div id="chipsView1">
 	<h1>Chips View 1</h1>
 	<div class="controls">

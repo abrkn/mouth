@@ -9,7 +9,8 @@
 		"browserify": "x",
 		"backbone": "x",
 		"less": "x",
-		"async": "x"
+		"async": "x",
+		"jquery": "x"
 	},
 	"devDependencies": {
 		"mocha": "x",
