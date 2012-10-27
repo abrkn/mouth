@@ -1,7 +1,8 @@
-# .travis.yml
 language: node_js
 node_js:
   - 0.6
+  - 0.8
+  - 0.9
 env: NODE_ENV=travis
 before_install:
   - npm config set loglevel warn
@@ -11,5 +12,5 @@ before_script:
   - node ./bin/phantom-web.js &
   - sleep 3
 script:
-  - mocha-phantomjs http://127.0.0.1:4011/
-  - mocha
+  - node ./node_modules/mocha-phantomjs/bin/mocha-phantomjs http://127.0.0.1:4011/
+  - node ./node_modules/mocha/bin/mocha
