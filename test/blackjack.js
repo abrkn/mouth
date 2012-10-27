@@ -70,24 +70,28 @@ describe('blackjack', function() {
 
 	describe('hand', function() {
 		it('should parse normal format', function() {
-			var hand = blackjack.hand('as 3h ad 7c');
-			expect(hand).to.eql([13*3+1, 3, 13+1, 13*2+7]);
+			var hand = blackjack.hand('as 3h kc');
+			expect(hand).to.eql([
+				blackjack.card('as'),
+				blackjack.card('3h'),
+				blackjack.card('kc')
+			]);
 		});
 	});
 
 	describe('card', function() {
 		it('should understand normal notation', function() {
 			var card = blackjack.card('as');
-			expect(card).to.be(13 * 3 + 1);
+			expect(card).to.be(13 * 0 + 1);
 
 			card = blackjack.card('KH');
-			expect(card).to.be(13);
+			expect(card).to.be(13 * 1 + 13);
 
 			card = blackjack.card('ah');
-			expect(card).to.be(1);
+			expect(card).to.be(13 * 1 + 1);
 
 			card = blackjack.card('td');
-			expect(card).to.be(13 * 1 + 10);
+			expect(card).to.be(13 * 2 + 10);
 		});
 	});
 });
