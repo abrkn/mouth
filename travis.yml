@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - 0.8
+env: NODE_ENV=travis
+before_install:
+  - npm config set loglevel warn
+before_script:
+  - "export DISPLAY=:99.0" 
+  - "sh -e /etc/init.d/xvfb start"
+  - node ./bin/phantom-web.js &
+  - sleep 3
+script:
+  - node ./node_modules/mocha-phantomjs/bin/mocha-phantomjs http://127.0.0.1:4011/
+  - node ./node_modules/mocha/bin/mocha

@@ -1,5 +1,4 @@
-var express = require('express')
-, app = express();
+var express = require('express');
 
-require('../lib/server/App.js')(app);
-app.listen(process.argv[1] || process.env.PORT || 4020);
+var server = require('../lib/server/App.js')();
+server.listen(process.env.PORT || 4010);
