@@ -17,7 +17,7 @@ describe('Handiew', function() {
 			var handView = new HandView({ model: hand });
 			handView.render();
 
-			expect(handView.$el.find('>.card').length).to.be(2);
+			expect(handView.$el.find('.card').length).to.be(2);
 		});
 	});
 });
