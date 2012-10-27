@@ -1,3 +1,4 @@
 node_modules/
 *.log
 bitcoin-data/
+./phantomjs.exe
