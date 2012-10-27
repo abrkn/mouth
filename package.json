@@ -2,7 +2,7 @@
 	"name": "mouth",
 	"version": "0.0.1",
 	"dependencies": {
-		"express": "x",
+		"express": "3.x",
 		"underscore": "x",
 		"socket.io": "x",
 		"debug": "x",
@@ -10,7 +10,9 @@
 		"backbone": "x",
 		"less": "x",
 		"async": "x",
-		"jquery": "x"
+		"jquery": "x",
+		"phantomjs": "x",
+		"mocha-phantomjs": "x"
 	},
 	"devDependencies": {
 		"mocha": "x",
