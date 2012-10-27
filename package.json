@@ -14,6 +14,9 @@
 		"phantomjs": "x",
 		"mocha-phantomjs": "x"
 	},
+	"scripts": {
+		"test": "mocha test test/server"
+	},
 	"devDependencies": {
 		"mocha": "x",
 		"expect.js": "x"
