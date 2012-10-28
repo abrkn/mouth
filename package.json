@@ -12,7 +12,13 @@
 		"async": "x",
 		"jquery": "x",
 		"phantomjs": "x",
-		"mocha-phantomjs": "x"
+		"mocha-phantomjs": "x",
+		"passport": "x",
+		"mongoose": "x",
+		"passport-facebook": "x",
+		"session-mongoose": "x",
+		"connect": "x",
+		"cookie": "x"
 	},
 	"scripts": {
 		"test": "mocha test test/server"

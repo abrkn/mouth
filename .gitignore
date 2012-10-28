@@ -2,3 +2,4 @@ node_modules/
 *.log
 bitcoin-data/
 phantomjs.exe
+lib/secrets.js
