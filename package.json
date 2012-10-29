@@ -14,9 +14,8 @@
 		"phantomjs": "x",
 		"mocha-phantomjs": "x",
 		"passport": "x",
-		"mongoose": "x",
+		"monk": "x",
 		"passport-facebook": "x",
-		"session-mongoose": "x",
 		"connect": "x",
 		"cookie": "x"
 	},
